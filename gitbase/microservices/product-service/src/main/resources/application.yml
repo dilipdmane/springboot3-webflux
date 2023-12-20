@@ -1,0 +1,21 @@
+server:
+  port: 7001
+logging:
+  level:
+    root: info
+    com.vibhuti.microservices: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+spring.data.mongodb:
+  host: localhost
+  port: 27017
+  database: product-db
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - docker
+server:
+  port: 8080

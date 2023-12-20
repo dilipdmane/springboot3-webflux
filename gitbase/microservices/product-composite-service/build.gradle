@@ -1,0 +1,43 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.vibhuti.microservices.composite.product'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+ext {
+	mapstructVersion="1.5.3.Final"
+}
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+	enabled = false
+    manifest {
+        attributes 'Main-Class': 'com.vibhuti.microservices.composite.product.ProductCompositeServiceApplication'
+    }
+}
+
+dependencies {
+	implementation project(':api-lib')
+    implementation project(':util')
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2'
+		
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
