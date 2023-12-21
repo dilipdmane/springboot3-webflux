@@ -4,3 +4,6 @@ MapStruct, which makes it easy to transform between Spring Data entity objects a
 
 
 https://www.geeksforgeeks.org/java-8-features/
+https://refactoring.guru/design-patterns
+https://spring.io/blog/2016/06/07/notes-on-reactive-programming-part-i-the-reactive-landscape/
+https://netflixtechblog.com/reactive-programming-in-the-netflix-api-with-rxjava-7811c3a1496a

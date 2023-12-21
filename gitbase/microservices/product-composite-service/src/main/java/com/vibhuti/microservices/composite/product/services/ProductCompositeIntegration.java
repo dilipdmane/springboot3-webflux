@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -127,4 +125,46 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 		      return new ArrayList<>();
 		    }
 		  }
+
+
+	@Override
+	public Review createReview(Review body) {
+		
+		return null;
+	}
+
+
+	@Override
+	public void deleteReviews(int productId) {
+		
+		
+	}
+
+
+	@Override
+	public Recommendation createRecommendation(Recommendation body) {
+		
+		return null;
+	}
+
+
+	@Override
+	public void deleteRecommendations(int productId) {
+		
+		
+	}
+
+
+	@Override
+	public Product createProduct(Product body) {
+		
+		return null;
+	}
+
+
+	@Override
+	public void deleteProduct(int productId) {
+		
+		
+	}
 }

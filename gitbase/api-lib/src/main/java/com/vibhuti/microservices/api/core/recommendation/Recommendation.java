@@ -1,12 +1,12 @@
 package com.vibhuti.microservices.api.core.recommendation;
 
 public class Recommendation {
-  private final int productId;
-  private final int recommendationId;
-  private final String author;
-  private final int rate;
-  private final String content;
-  private final String serviceAddress;
+  private  int productId;
+  private  int recommendationId;
+  private  String author;
+  private  int rate;
+  private  String content;
+  private  String serviceAddress;
 
   public Recommendation() {
     productId = 0;
@@ -56,4 +56,30 @@ public class Recommendation {
   public String getServiceAddress() {
     return serviceAddress;
   }
+
+public void setProductId(int productId) {
+	this.productId = productId;
+}
+
+public void setRecommendationId(int recommendationId) {
+	this.recommendationId = recommendationId;
+}
+
+public void setAuthor(String author) {
+	this.author = author;
+}
+
+public void setRate(int rate) {
+	this.rate = rate;
+}
+
+public void setContent(String content) {
+	this.content = content;
+}
+
+public void setServiceAddress(String serviceAddress) {
+	this.serviceAddress = serviceAddress;
+}
+  
+  
 }
