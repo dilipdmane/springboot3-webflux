@@ -4,12 +4,13 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.Mappings;
 
 import com.vibhuti.microservices.api.core.recommendation.Recommendation;
 import com.vibhuti.microservices.core.review.recommendation.persistence.RecommendationEntity;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RecommendationMapper {
 
   @Mappings({

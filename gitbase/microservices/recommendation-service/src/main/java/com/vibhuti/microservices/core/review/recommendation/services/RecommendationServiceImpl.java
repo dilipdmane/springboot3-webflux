@@ -54,6 +54,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 					recommendation.getRecommendationId());
 			return this.recommendationMapper.entityToApi(savedRecommendationEntity);
 		} catch (DuplicateKeyException e) {
+			LOG.error(e.getMessage());
 			throw new InvalidInputException("Duplicate key, Product Id: " + recommendation.getProductId()
 					+ ", Recommendation Id:" + recommendation.getRecommendationId());
 		}

@@ -2,7 +2,7 @@ kill $(jobs -p)
 
 MapStruct, which makes it easy to transform between Spring Data entity objects and the API model classes. For further details, see http://mapstruct.org/.
 
-
+Learning wotks
 https://www.geeksforgeeks.org/java-8-features/
 https://refactoring.guru/design-patterns
 https://spring.io/blog/2016/06/07/notes-on-reactive-programming-part-i-the-reactive-landscape/

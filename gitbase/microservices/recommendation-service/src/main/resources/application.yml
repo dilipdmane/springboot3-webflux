@@ -4,7 +4,18 @@ logging:
   level:
     root: info
     com.vibhuti.microservices: DEBUG
-    
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+spring.data.mongodb:
+  host: localhost
+  port: 27017
+  database: product-db
+  
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true    
+
 ---
 spring:
   config:
@@ -13,3 +24,5 @@ spring:
       - docker
 server:
   port: 8080
+  
+spring.data.mongodb.host: mongodb
