@@ -28,7 +28,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 		this.repository.deleteAll();
 	}
 
-	//@Test
+	@Test
 	void getRecommendationsByProductId() {
 		int productId = 1;
 		postAndVerifyRecommendation(productId, 1, HttpStatus.OK);
@@ -56,7 +56,7 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 		assertEquals(1, repository.count());
 	}
 
-	//@Test
+	@Test
 	void deleteRecommendations() {
 
 		int productId = 1;
@@ -71,28 +71,28 @@ class RecommendationServiceApplicationTests extends MongoDbTestBase {
 		deleteAndVerifyRecommendationsByProductId(productId, HttpStatus.OK);
 	}
 
-	//@Test
+	@Test
 	void getRecommendationsMissingParameter() {
 
 		getAndVerifyRecommendationsByProductId("", HttpStatus.BAD_REQUEST).jsonPath("$.path")
-				.isEqualTo("/recommendation");
-				//.jsonPath("$.message")				.isEqualTo("Required query parameter 'productId' is not present.");
+				.isEqualTo("/recommendation")
+				.jsonPath("$.message");//				.isEqualTo("Required query parameter 'productId' is not present.");
 	}
 
-	//@Test
+	@Test
 	void getRecommendationsInvalidParameter() {
 
 		getAndVerifyRecommendationsByProductId("?productId=no-integer", HttpStatus.BAD_REQUEST).jsonPath("$.path")
 				.isEqualTo("/recommendation");//	.jsonPath("$.message").isEqualTo("Type mismatch.");
 	}
 
-	//@Test
+	@Test
 	void getRecommendationsNotFound() {
 
 		getAndVerifyRecommendationsByProductId("?productId=113", HttpStatus.OK).jsonPath("$.length()").isEqualTo(0);
 	}
 
-	//@Test
+	@Test
 	void getRecommendationsInvalidParameterNegativeValue() {
 
 		int productIdInvalid = -1;
