@@ -9,7 +9,7 @@ logging:
 spring.data.mongodb:
   host: localhost
   port: 27017
-  database: product-db
+  database: recommendation-db
   
 spring:
   data:

@@ -7,3 +7,15 @@ https://www.geeksforgeeks.org/java-8-features/
 https://refactoring.guru/design-patterns
 https://spring.io/blog/2016/06/07/notes-on-reactive-programming-part-i-the-reactive-landscape/
 https://netflixtechblog.com/reactive-programming-in-the-netflix-api-with-rxjava-7811c3a1496a
+
+docker run 
+
+docker run -d -p 3306:3306 --env MYSQL_ROOT_PASSWORD=rootpwd --env MYSQL_DATABASE=review-db --env MYSQL_USER=user --envMYSQL_PASSWORD=pwd --memory 512M --name mysql mysql:8.0.32
+docker run -d -p 8080:8080 --env SPRING_PROFILES_ACTIVE=docker --memory 512M --name review microservices/review-service
+
+
+ 
+ docker-compose exec mysql mysql -uuser -p review-db -e "select * from reviews"
+ docker-compose exec mongodb mongosh product-db --quiet --eval "db.products.find()"
+ docker-compose exec mongodb mongosh recommendation-db --quiet --eval "db.recommendations.find()"
+ 

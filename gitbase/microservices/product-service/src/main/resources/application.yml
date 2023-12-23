@@ -11,6 +11,11 @@ spring.data.mongodb:
   port: 27017
   database: product-db
 
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true    
+
 ---
 spring:
   config:
