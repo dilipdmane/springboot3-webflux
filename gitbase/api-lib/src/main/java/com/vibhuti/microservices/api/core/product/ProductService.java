@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import reactor.core.publisher.Mono;
+
 public interface ProductService {
 
 	/**
@@ -15,7 +17,7 @@ public interface ProductService {
 	 * @return the product, if found, else null
 	 */
 	@GetMapping(value = "/product/{productId}", produces = "application/json")
-	Product getProduct(@PathVariable("productId") int productId);
+	Mono<Product> getProduct(@PathVariable("productId") int productId);
 	
 	  /**
 	   * Sample usage, see below.
@@ -31,7 +33,7 @@ public interface ProductService {
 	    value    = "/product",
 	    consumes = "application/json",
 	    produces = "application/json")
-	  Product createProduct(@RequestBody Product body);
+	  Mono<Product> createProduct(@RequestBody Product body);
 	  
 	  /**
 	   * Sample usage: "curl -X DELETE $HOST:$PORT/product/1".
@@ -39,6 +41,6 @@ public interface ProductService {
 	   * @param productId Id of the product
 	   */
 	  @DeleteMapping(value = "/product/{productId}")
-	  void deleteProduct(@PathVariable int productId);
+	  Mono<Void> deleteProduct(@PathVariable int productId);
 	
 }

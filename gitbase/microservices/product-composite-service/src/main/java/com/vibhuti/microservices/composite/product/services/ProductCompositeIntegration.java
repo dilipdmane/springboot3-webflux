@@ -1,6 +1,8 @@
 package com.vibhuti.microservices.composite.product.services;
 
 import static org.springframework.http.HttpMethod.GET;
+import static java.util.logging.Level.FINE;
+import static reactor.core.publisher.Flux.empty;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,14 +11,18 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext.Empty;
 import com.vibhuti.microservices.api.core.product.Product;
 import com.vibhuti.microservices.api.core.product.ProductService;
 import com.vibhuti.microservices.api.core.recommendation.Recommendation;
@@ -27,29 +33,38 @@ import com.vibhuti.microservices.exception.InvalidInputException;
 import com.vibhuti.microservices.exception.NotFoundException;
 import com.vibhuti.microservices.util.HttpErrorInfo;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+
 @Component
 public class ProductCompositeIntegration implements ProductService, RecommendationService, ReviewService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
-	private final RestTemplate restTemplate;
+
 	private final ObjectMapper mapper;
 
 	private final String productServiceUrl;
 	private final String recommendationServiceUrl;
 	private final String reviewServiceUrl;
+	private final StreamBridge streamBridge;
+
+	private final WebClient webClient;
+	private final Scheduler publishEventScheduler;
 
 	@Autowired
-	public ProductCompositeIntegration(RestTemplate restTemplate, ObjectMapper mapper,
+	public ProductCompositeIntegration(@Qualifier("publishEventScheduler") Scheduler publishEventScheduler,
+			WebClient.Builder webClient, ObjectMapper mapper, StreamBridge streamBridge,
 			@Value("${app.product-service.host}") String productServiceHost,
 			@Value("${app.product-service.port}") int productServicePort,
 			@Value("${app.recommendation-service.host}") String recommendationServiceHost,
 			@Value("${app.recommendation-service.port}") int recommendationServicePort,
 			@Value("${app.review-service.host}") String reviewServiceHost,
 			@Value("${app.review-service.port}") int reviewServicePort) {
-
-		this.restTemplate = restTemplate;
+		this.publishEventScheduler = publishEventScheduler;
+		this.webClient = webClient.build();
 		this.mapper = mapper;
-
+		this.streamBridge = streamBridge;
 		productServiceUrl = "http://" + productServiceHost + ":" + productServicePort + "/product";
 		recommendationServiceUrl = "http://" + recommendationServiceHost + ":" + recommendationServicePort
 				+ "/recommendation";
@@ -58,15 +73,45 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public Product getProduct(int productId) {
-		try {
-			String url = this.productServiceUrl +"/" +productId;
-			Product product = this.restTemplate.getForObject(url, Product.class);
-			return product;
-		} catch (HttpClientErrorException ex) {
-			throw handleHttpClientException(ex);
-		}
+	public Mono<Product> getProduct(int productId) {
+
+		String url = this.productServiceUrl + "/" + productId;
+		return webClient.get().uri(url).retrieve().bodyToMono(Product.class).log(LOG.getName(), FINE)
+				.onErrorMap(WebClientResponseException.class, ex -> handleException(ex));
+
 	}//
+
+	private Throwable handleException(Throwable ex) {
+
+		if (!(ex instanceof WebClientResponseException)) {
+			LOG.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+			return ex;
+		}
+
+		WebClientResponseException wcre = (WebClientResponseException) ex;
+
+		switch (HttpStatus.resolve(wcre.getStatusCode().value())) {
+
+		case NOT_FOUND:
+			return new NotFoundException(getErrorMessage(wcre));
+
+		case UNPROCESSABLE_ENTITY:
+			return new InvalidInputException(getErrorMessage(wcre));
+
+		default:
+			LOG.warn("Got an unexpected HTTP error: {}, will rethrow it", wcre.getStatusCode());
+			LOG.warn("Error body: {}", wcre.getResponseBodyAsString());
+			return ex;
+		}
+	}
+
+	private String getErrorMessage(WebClientResponseException ex) {
+		try {
+			return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
+		} catch (IOException ioex) {
+			return ex.getMessage();
+		}
+	}
 
 	private String getErrorMessage(HttpClientErrorException ex) {
 		try {
@@ -76,50 +121,23 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 		}
 	}
 
-	public List<Recommendation> getRecommendations(int productId) {
+	public Flux<Recommendation> getRecommendations(int productId) {
+		String url = recommendationServiceUrl + "?productId=" + productId;
+		LOG.debug("Will call getRecommendations API on URL: {}", url);
 
-		try {
-			String url = recommendationServiceUrl +  "?productId="+productId;
-
-			LOG.debug("Will call getRecommendations API on URL: {}", url);
-			List<Recommendation> recommendations = restTemplate
-					.exchange(url, GET, null, new ParameterizedTypeReference<List<Recommendation>>() {
-					}).getBody();
-
-			LOG.debug("Found {} recommendations for a product with id: {}", recommendations.size(), productId);
-			return recommendations;
-
-		} catch (Exception ex) {
-			LOG.warn("Got an exception while requesting recommendations, return zero recommendations: {}",
-					ex.getMessage());
-			return new ArrayList<>();
-		}
+		return webClient.get().uri(url).retrieve().bodyToFlux(Recommendation.class).onErrorResume(e -> empty());
 	}
 
-	public List<Review> getReviews(int productId) {
-
-		try {
-			String url = reviewServiceUrl +  "?productId="+productId;
-
-			LOG.debug("Will call getReviews API on URL: {}", url);
-			List<Review> reviews = restTemplate
-					.exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() {
-					}).getBody();
-
-			LOG.debug("Found {} reviews for a product with id: {}", reviews.size(), productId);
-			return reviews;
-
-		} catch (Exception ex) {
-			LOG.warn("Got an exception while requesting reviews, return zero reviews: {}", ex.getMessage());
-			return new ArrayList<>();
-		}
+	public Flux<Review> getReviews(int productId) {
+		String url = reviewServiceUrl + "?productId=" + productId;
+		return webClient.get().uri(url).retrieve().bodyToFlux(Review.class).onErrorResume(e -> empty());
 	}
 
 	@Override
-	public Review createReview(Review body) {
+	public Mono<Review> createReview(Review body) {
 		try {
 			String url = this.reviewServiceUrl;
-			LOG.debug("Will post a new review to URL{}",url);
+			LOG.debug("Will post a new review to URL{}", url);
 			Review review = this.restTemplate.postForObject(url, body, Review.class);
 			return review;
 		} catch (HttpClientErrorException ex) {
@@ -128,9 +146,9 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public void deleteReviews(int productId) {
+	public Mono<Void> deleteReviews(int productId) {
 		try {
-			String url = reviewServiceUrl +  "?productId="+productId;
+			String url = reviewServiceUrl + "?productId=" + productId;
 			LOG.debug("Will delete  review to URL: {}", url);
 			this.restTemplate.delete(url);
 		} catch (HttpClientErrorException ex) {
@@ -139,7 +157,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public Recommendation createRecommendation(Recommendation body) {
+	public Mono<Recommendation> createRecommendation(Recommendation body) {
 		try {
 			String url = recommendationServiceUrl;
 			LOG.debug("Will post a new recommendation to URL: {}", url);
@@ -155,9 +173,9 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public void deleteRecommendations(int productId) {
+	public Mono<Void> deleteRecommendations(int productId) {
 		try {
-			String url = recommendationServiceUrl +  "?productId="+productId;
+			String url = recommendationServiceUrl + "?productId=" + productId;
 			LOG.debug("Will delete  recommendation to URL: {}", url);
 			this.restTemplate.delete(url);
 		} catch (HttpClientErrorException ex) {
@@ -166,7 +184,7 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public Product createProduct(Product body) {
+	public Mono<Product> createProduct(Product body) {
 		try {
 			String url = this.productServiceUrl;
 			LOG.debug("Will post a new product to URL: {}", url);
@@ -180,9 +198,9 @@ public class ProductCompositeIntegration implements ProductService, Recommendati
 	}
 
 	@Override
-	public void deleteProduct(int productId) {
+	public Mono<Void> deleteProduct(int productId) {
 		try {
-			String url = this.productServiceUrl + "/"+productId;
+			String url = this.productServiceUrl + "/" + productId;
 			LOG.debug("Will delete  product to URL: {}", url);
 			this.restTemplate.delete(url);
 		} catch (HttpClientErrorException ex) {

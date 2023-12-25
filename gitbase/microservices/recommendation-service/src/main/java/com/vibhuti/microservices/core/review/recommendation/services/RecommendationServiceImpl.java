@@ -1,4 +1,5 @@
 package com.vibhuti.microservices.core.review.recommendation.services;
+import static java.util.logging.Level.FINE;
 
 import java.util.List;
 
@@ -14,6 +15,9 @@ import com.vibhuti.microservices.core.review.recommendation.persistence.Recommen
 import com.vibhuti.microservices.core.review.recommendation.persistence.RecommendationRepository;
 import com.vibhuti.microservices.exception.InvalidInputException;
 import com.vibhuti.microservices.util.ServiceUtil;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class RecommendationServiceImpl implements RecommendationService {
@@ -33,36 +37,49 @@ public class RecommendationServiceImpl implements RecommendationService {
 	}
 
 	@Override
-	public List<Recommendation> getRecommendations(int productId) {
+	public Flux<Recommendation> getRecommendations(int productId) {
 
 		if (productId < 1) {
 			throw new InvalidInputException("Invalid productId: " + productId);
 		}
-		List<RecommendationEntity> listOfEntities = this.recommendationRepository.findByProductId(productId);
-		List<Recommendation> list = this.recommendationMapper.entityListToApiList(listOfEntities);
-		list.stream().forEach(r -> r.setServiceAddress(this.serviceUtil.getServiceAddress()));
-		LOG.debug("getRecommendation response size: {}", list.size());
-		return list;
+		 LOG.info("Will get recommendations for product with id={}", productId);
+
+		    return recommendationRepository.findByProductId(productId)
+		      .log(LOG.getName(), FINE)
+		      .map(e -> recommendationMapper.entityToApi(e))
+		      .map(e -> setServiceAddress(e));
 	}
 
 	@Override
-	public Recommendation createRecommendation(Recommendation recommendation) {
-		try {
-			RecommendationEntity recommendationEntity = this.recommendationMapper.apiToEntity(recommendation);
-			RecommendationEntity savedRecommendationEntity = this.recommendationRepository.save(recommendationEntity);
-			LOG.debug("createRecommendation: created a recommendation entity: {}/{}", recommendation.getProductId(),
-					recommendation.getRecommendationId());
-			return this.recommendationMapper.entityToApi(savedRecommendationEntity);
-		} catch (DuplicateKeyException e) {
-			LOG.error(e.getMessage());
-			throw new InvalidInputException("Duplicate key, Product Id: " + recommendation.getProductId()
-					+ ", Recommendation Id:" + recommendation.getRecommendationId());
+	public Mono<Recommendation> createRecommendation(Recommendation body) {
+		if( body.getProductId()<1)
+		{
+			throw new InvalidInputException("Invalid productId: " + body.getProductId());
 		}
+		
+		RecommendationEntity recommendationEntity = this.recommendationMapper.apiToEntity(body);
+		Mono<Recommendation> recommendation = this.recommendationRepository.save(recommendationEntity)
+		.log(LOG.getName(),FINE)
+		.onErrorMap(DuplicateKeyException.class, ex -> (new InvalidInputException("Duplicate key, Product Id: " + body.getProductId()
+					+ ", Recommendation Id:" + body.getRecommendationId())
+				))
+		.map(e -> this.recommendationMapper.entityToApi(e));
+		return recommendation;
 	}
 
 	@Override
-	public void deleteRecommendations(int productId) {
+	public Mono<Void> deleteRecommendations(int productId) {
+		if( productId <1)
+		{
+			throw new InvalidInputException("Invalid productId: " + productId);
+		}
 		 LOG.debug("deleteRecommendations: tries to delete recommendations for the product with productId: {}", productId);
-		this.recommendationRepository.deleteAll(this.recommendationRepository.findByProductId(productId));
+		 //this.recommendationRepository.deleteAll(this.recommendationRepository.findByProductId(productId));
+		 return this.recommendationRepository.deleteAll(this.recommendationRepository.findByProductId(productId));		 
 	}
+	
+	private Recommendation setServiceAddress(Recommendation e) {
+	    e.setServiceAddress(serviceUtil.getServiceAddress());
+	    return e;
+	  }
 }
