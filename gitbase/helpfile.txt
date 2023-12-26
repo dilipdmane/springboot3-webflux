@@ -11,7 +11,7 @@ https://medium.com/sysco-labs/reactive-programming-in-java-8d1f5c648012
 https://www.youtube.com/@CodewithDilip
 https://developer.okta.com/blog/2020/04/15/spring-cloud-stream
 https://gorillalogic.com/blog/an-introduction-to-spring-cloud-streams
-
+https://www.vinsguru.com/circuit-breaker-pattern/
 
 https://365datascience.com/trending/best-degrees-in-ai/
 

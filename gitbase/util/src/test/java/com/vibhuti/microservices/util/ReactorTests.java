@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 class ReactorTests {
 
@@ -34,4 +35,15 @@ class ReactorTests {
 
     assertThat(list).containsExactly(4, 8);
   }
+  
+  @Test
+  void testStepVerifier() {
+    StepVerifier.create(Flux.just(1, 2, 3, 4)
+      .filter(n -> n % 2 == 0)
+      .map(n -> n * 2)
+      .log())
+      .expectNext(4, 8, 12);
+  }
+  
+  
 }
