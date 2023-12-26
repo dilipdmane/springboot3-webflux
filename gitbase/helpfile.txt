@@ -9,6 +9,9 @@ https://spring.io/blog/2016/06/07/notes-on-reactive-programming-part-i-the-react
 https://netflixtechblog.com/reactive-programming-in-the-netflix-api-with-rxjava-7811c3a1496a
 https://medium.com/sysco-labs/reactive-programming-in-java-8d1f5c648012
 https://www.youtube.com/@CodewithDilip
+https://developer.okta.com/blog/2020/04/15/spring-cloud-stream
+https://gorillalogic.com/blog/an-introduction-to-spring-cloud-streams
+
 
 https://365datascience.com/trending/best-degrees-in-ai/
 
@@ -21,3 +24,10 @@ docker run -d -p 8080:8080 --env SPRING_PROFILES_ACTIVE=docker --memory 512M --n
  docker-compose exec mongodb mongosh product-db --quiet --eval "db.products.find()"
  docker-compose exec mongodb mongosh recommendation-db --quiet --eval "db.recommendations.find()"
  
+
+
+
+Kafta
+docker-compose exec kafka kafka-topics --bootstrap-server localhost:9092 --list
+docker-compose exec kafka kafka-topics --bootstrap-server localhost:9092 --describe --topic products
+docker-compose exec kafka kafka-console-consumer --bootstrap-server localhost:9092 --topic products --from-beginning --timeout-ms 1000 --partition 1

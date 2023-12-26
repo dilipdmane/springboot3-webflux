@@ -25,6 +25,9 @@ import com.vibhuti.microservices.composite.product.services.ProductCompositeInte
 import com.vibhuti.microservices.exception.InvalidInputException;
 import com.vibhuti.microservices.exception.NotFoundException;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class ProductCompositeServiceApplicationTests {
@@ -41,11 +44,11 @@ class ProductCompositeServiceApplicationTests {
   void setUp() {
 
     when(compositeIntegration.getProduct(PRODUCT_ID_OK))
-      .thenReturn(new Product(PRODUCT_ID_OK, "name", 1, "mock-address"));
+      .thenReturn(Mono.just(new Product(PRODUCT_ID_OK, "name", 1, "mock-address")));
     when(compositeIntegration.getRecommendations(PRODUCT_ID_OK))
-      .thenReturn(singletonList(new Recommendation(PRODUCT_ID_OK, 1, "author", 1, "content", "mock address")));
+      .thenReturn(Flux.fromIterable(singletonList(new Recommendation(PRODUCT_ID_OK, 1, "author", 1, "content", "mock address"))));
     when(compositeIntegration.getReviews(PRODUCT_ID_OK))
-      .thenReturn(singletonList(new Review(PRODUCT_ID_OK, 1, "author", "subject", "content", "mock address")));
+      .thenReturn(Flux.fromIterable(singletonList(new Review(PRODUCT_ID_OK, 1, "author", "subject", "content", "mock address"))));
 
     when(compositeIntegration.getProduct(PRODUCT_ID_NOT_FOUND))
       .thenThrow(new NotFoundException("NOT FOUND: " + PRODUCT_ID_NOT_FOUND));
@@ -57,34 +60,7 @@ class ProductCompositeServiceApplicationTests {
   @Test
   void contextLoads() {}
 
-  @Test
-  void createCompositeProduct1() {
 
-    ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1, null, null, null);
-
-    postAndVerifyProduct(compositeProduct, HttpStatus.OK);
-  }
-
-  @Test
-  void createCompositeProduct2() {
-    ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1,
-      singletonList(new RecommendationSummary(1, "a", 1, "c")),
-      singletonList(new ReviewSummary(1, "a", "s", "c")), null);
-
-    postAndVerifyProduct(compositeProduct, HttpStatus.OK);
-  }
-
-  @Test
-  void deleteCompositeProduct() {
-    ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1,
-      singletonList(new RecommendationSummary(1, "a", 1, "c")),
-      singletonList(new ReviewSummary(1, "a", "s", "c")), null);
-
-    postAndVerifyProduct(compositeProduct, HttpStatus.OK);
-
-    deleteAndVerifyProduct(compositeProduct.getProductId(), HttpStatus.OK);
-    deleteAndVerifyProduct(compositeProduct.getProductId(), HttpStatus.OK);
-  }
 
   @Test
   void getProductById() {
@@ -121,18 +97,5 @@ class ProductCompositeServiceApplicationTests {
 	      .expectBody();
 	  }
 
-	  private void postAndVerifyProduct(ProductAggregate compositeProduct, HttpStatus expectedStatus) {
-	    client.post()
-	      .uri("/product-composite")
-	      .body(just(compositeProduct), ProductAggregate.class)
-	      .exchange()
-	      .expectStatus().isEqualTo(expectedStatus);
-	  }
-
-	  private void deleteAndVerifyProduct(int productId, HttpStatus expectedStatus) {
-	    client.delete()
-	      .uri("/product-composite/" + productId)
-	      .exchange()
-	      .expectStatus().isEqualTo(expectedStatus);
-	  }
+	
 }

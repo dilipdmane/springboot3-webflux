@@ -1,13 +1,28 @@
 install:	
 	gradlew clean build 
-	docker-compose build
 
-deploy:	
-	docker compose up -d
+deploy:
+	docker-compose build	
+	docker-compose up -d
+
+deploy-rabMQ:	
+	docker-compose -f docker-compose-partitions.yml build	
+	docker-compose -f docker-compose-partitions.yml up -d
+
+deploy-kafka:	
+	docker-compose -f docker-compose-kafka.yml build	
+	docker-compose -f docker-compose-kafka.yml up -d
+
 
 undeploy:
-	docker compose down --remove-orphans
-	docker image prune -a -f
+	docker-compose down --remove-orphans
+
+undeploy-rabMQ:
+	docker-compose -f docker-compose-partitions.yml down --remove-orphans
+	
+undeploy-kafka:	
+	docker-compose -f docker-compose-kafka.yml down --remove-orphans	
+	
 	
 clean-docker:
 	docker image prune -a -f	
