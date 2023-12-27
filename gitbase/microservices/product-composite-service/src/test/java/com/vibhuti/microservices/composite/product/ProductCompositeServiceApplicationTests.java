@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static reactor.core.publisher.Mono.just;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,9 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.vibhuti.microservices.api.composite.product.ProductAggregate;
-import com.vibhuti.microservices.api.composite.product.RecommendationSummary;
-import com.vibhuti.microservices.api.composite.product.ReviewSummary;
 import com.vibhuti.microservices.api.core.product.Product;
 import com.vibhuti.microservices.api.core.recommendation.Recommendation;
 import com.vibhuti.microservices.api.core.review.Review;
@@ -29,7 +25,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT,properties = {"eureka.client.enabled=false"})
 class ProductCompositeServiceApplicationTests {
 
   private static final int PRODUCT_ID_OK = 1;

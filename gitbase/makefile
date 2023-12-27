@@ -4,6 +4,10 @@ install:
 deploy:
 	docker-compose build	
 	docker-compose up -d
+	
+scale-deploy:
+	docker-compose build	
+	docker-compose up -d --scale "$s"	
 
 deploy-rabMQ:	
 	docker-compose -f docker-compose-partitions.yml build	

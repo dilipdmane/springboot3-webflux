@@ -13,7 +13,7 @@ java {
 
 ext {
 	mapstructVersion="1.5.3.Final"
-	springCloudVersion = "2022.0.1"
+	springCloudVersion = "2023.0.0"
 }
 
 repositories {
@@ -34,6 +34,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.2'
 		
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
