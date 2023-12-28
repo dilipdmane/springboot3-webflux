@@ -1,5 +1,8 @@
 install:	
-	gradlew clean build 
+	gradlew clean build -x test 
+
+test-install:	
+	gradlew clean build
 
 deploy:
 	docker-compose build	

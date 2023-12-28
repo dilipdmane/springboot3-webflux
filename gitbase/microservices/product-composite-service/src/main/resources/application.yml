@@ -1,14 +1,15 @@
 springdoc:
-  
+  swagger-ui.enabled: true
   swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
-  packages-to-scan:
-  - com.vibhuti.microservices.api.composite.product
-  paths-to-match:
-  - /**
+  packagesToScan: com.vibhuti.microservices.api.composite.product    
+  paths-to-match: com/vibhuti/microservices/api/composite/*
+  cache:
+    disabled: true
+
+server.forward-headers-strategy: framework
 
 api:
-
   common:
     version: 1.0.0
     title: Test Sample API
@@ -20,8 +21,8 @@ api:
     externalDocDesc: MY WIKI PAGE
     externalDocUrl: MY WIKI URL
     contact:
-      name: NAME OF CONTACT
-      url: URL TO CONTACT
+      name: Dilip Mane
+      url: https://mane.net
       email: mailtodmane@mail.com
 
   responseCodes:
@@ -78,9 +79,6 @@ api:
           Entities for product information, recommendations and reviews related to the specified productId will be deleted.
           The implementation of the delete method is idempotent, i.e. it can be called several times with the same response.
           This means that a delete request of a non-existing product will return **200 Ok**.
-
-
-    
         
 server:
   port: 7000
