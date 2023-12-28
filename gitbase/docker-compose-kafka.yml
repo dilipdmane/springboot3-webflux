@@ -70,8 +70,6 @@ services:
   product-composite:
     build: microservices/product-composite-service
     mem_limit: 512m
-    ports:
-      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker,streaming_partitioned,kafka
     depends_on:
@@ -132,5 +130,3 @@ services:
   eureka:
     build: spring-cloud/eureka-server
     mem_limit: 512m
-    ports:
-      - "8761:8761"
