@@ -12,6 +12,8 @@ https://www.youtube.com/@CodewithDilip
 https://developer.okta.com/blog/2020/04/15/spring-cloud-stream
 https://gorillalogic.com/blog/an-introduction-to-spring-cloud-streams
 https://www.vinsguru.com/circuit-breaker-pattern/
+https://medium.com/israeli-tech-radar/oauth-2-0-and-openid-connect-for-dummies-6fa6e995d6d5
+
 
 https://365datascience.com/trending/best-degrees-in-ai/
 
@@ -38,3 +40,51 @@ git branch branch-name
 git push –u origin <branch name>
 added new note
 
+
+
+
+Acquiring access tokens using the authorization code grant flow
+
+https://localhost:8443/oauth2/authorize?response_type=code&client_id=reader&redirect_uri=https://my.redirect.uri&scope=product:read&state=35725
+
+Response : 
+https://my.redirect.uri/?code=a6VGPmtdA3UdzeanmV8oiJLYUWRMXqZcM2FlTinBOIFyabi0VOtZoy-uMW6c7MK1FBdjxz5zdf6YV_0J-R9kn_9caf7ENrmhWYWQ3yeuyAUJK7jLcgpTHOcg5mCKsbkJ&state=35725
+
+
+curl -k https://reader:secret-reader@localhost:8443/oauth2/token \
+ -d grant_type=authorization_code \
+ -d client_id=writer \
+ -d redirect_uri=https://my.redirect.uri \
+ -d code=a6VGPmtdA3UdzeanmV8oiJLYUWRMXqZcM2FlTinBOIFyabi0VOtZoy-uMW6c7MK1FBdjxz5zdf6YV_0J-R9kn_9caf7ENrmhWYWQ3yeuyAUJK7jLcgpTHOcg5mCKsbkJ -s | jq .
+ 
+ {
+  "access_token": "eyJraWQiOiI4Njc4ODhiOS1lY2ExLTRjNTEtOWQ4OS1lNDRlZTVhMzNiZDAiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1IiwiYXVkIjoicmVhZGVyIiwibmJmIjoxNzAzOTA3MDg2LCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXSwiaXNzIjoiaHR0cDovL2F1dGgtc2VydmVyOjk5OTkiLCJleHAiOjE3MDM5MTA2ODYsImlhdCI6MTcwMzkwNzA4Nn0.HGsfanyzBe_Mwv3R56CFX_QCjDVAvHOrua9vJhL5Sm1Tl7hkWjEod-XA7QnRrXRzNRd5vkvRwoSLYqV6f12F7DdCJNYlIfHTe6RyD9ztT4EgoFjDNkrlyVnooCJXqonv2SwVhtp3wNgg1YVFiJEO3mgbi899_nKFE8bqpjHFpXjmKAPHyISJVUuF8nyEcXLlTVD6XKLR2LXom6GdPOfeUPCW1QXgyAG1_tqDBL1y_7b8C07-M6FPBsBU12X4j3EnoLItGFdC5zPJmX7g3C_2bzbAm-gt4nPXJcNvNnExib9ePwjQHIJpJx2NrIgxQ94fiZDx0mKkae25bdXya91G0g",
+  "refresh_token": "2Qgm3pQ7scwCff56b4VA8PEykvAeEhm5JQjp_VmhrMeeBuue1Vlisw5o5rqWvhOPxlmgFzhAlCXpt4N_st4JjU89Ac20IlF8FsXoweFCISBuGydAvpFsl36RUTm9RI8P",
+  "scope": "product:read",
+  "token_type": "Bearer",
+  "expires_in": 3599
+}
+
+Get READ WRITE TOKEN
+
+https://localhost:8443/oauth2/authorize?response_type=code&client_id=writer&redirect_uri=https://my.redirect.uri&scope=product:read+product:write&state=72489
+
+
+https://my.redirect.uri/?code=_r6gV0Db8yHjy4fDY4cv5XXBWbWYh-iazCClcWX3vOGGn5-dVCUwy_g9_jiro6lvgTx4uFhCtz3ouLndIp49hkcg6NLmRH0uiifpEns49KRlngd59r6P_yDHimpJ2Ry9&state=72489
+
+
+  
+  
+  
+  dmane@DESKTOP-D9OR5G7:~$ curl -k https://writer:secret-writer@localhost:8443/oauth2/token \
+  -d grant_type=authorization_code \
+  -d client_id=writer \
+  -d redirect_uri=https://my.redirect.uri \
+  -d code=_r6gV0Db8yHjy4fDY4cv5XXBWbWYh-iazCClcWX3vOGGn5-dVCUwy_g9_jiro6lvgTx4uFhCtz3ouLndIp49hkcg6NLmRH0uiifpEns49KRlngd59r6P_yDHimpJ2Ry9 -s | jq
+{
+  "access_token": "eyJraWQiOiI4Njc4ODhiOS1lY2ExLTRjNTEtOWQ4OS1lNDRlZTVhMzNiZDAiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1IiwiYXVkIjoid3JpdGVyIiwibmJmIjoxNzAzOTA3MjA0LCJzY29wZSI6WyJwcm9kdWN0OndyaXRlIiwicHJvZHVjdDpyZWFkIl0sImlzcyI6Imh0dHA6Ly9hdXRoLXNlcnZlcjo5OTk5IiwiZXhwIjoxNzAzOTEwODA0LCJpYXQiOjE3MDM5MDcyMDR9.w6eQhKU-NhPxpSV_K8RrdMEngD_m0jSaEdi79a0p1-1d-uh665do0h5qxuf6ORYX49jMh2ZX0ch1ijG7KdcNnfm_FMMds66C8VJ5ZYhfaiQL5CRE-whKkH_7kLvHzQXANJT41aEfmDezuvXkArOED5BThhcM4K47gw8_AamTMpbGIQHSNlnrHfnLjvVesZ9V7U4XiDpSJUq2xkNQa91xYAqgpETZyq-A8hRGVbG42O1EIj-7ndsbn0o09BXthrYy4NCiqgDLnJCCLoeht9ek6pV2CX2cwjDtFoBNjUlZYe8NSGWY_UAi0L2Qmdtr9O6j-YFB3chiNVMHo-3tKHt4gQ",
+  "refresh_token": "kaYpJiBn1wvfdxMO3ApyvKFFGbstzKwsEkLniH9zgEgPiYKmhgN3RYBS4NEiPzPLgVs7A8J9HSAn-usG7kpazZjGjaiDXwItkNFfyBKscycTDEr19yZ9z3kNCY0zvhZ7",
+  "scope": "product:write product:read",
+  "token_type": "Bearer",
+  "expires_in": 3599
+}
