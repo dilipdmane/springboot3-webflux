@@ -76,7 +76,7 @@ https://my.redirect.uri/?code=_r6gV0Db8yHjy4fDY4cv5XXBWbWYh-iazCClcWX3vOGGn5-dVC
   
   
   
-  dmane@DESKTOP-D9OR5G7:~$ curl -k https://writer:secret-writer@localhost:8443/oauth2/token \
+  dmane@DESKTOP-D9OR5G7:~$ curl -k https://writer:secret-writer@localhost:8888888888888888888443/oauth2/token \
   -d grant_type=authorization_code \
   -d client_id=writer \
   -d redirect_uri=https://my.redirect.uri \

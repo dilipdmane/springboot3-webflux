@@ -3,9 +3,9 @@ springdoc:
   swagger-ui.path: /openapi/swagger-ui.html
   api-docs.path: /openapi/v3/api-docs
   packages-to-scan:
-  -  com.vibhuti.microservices.api.composite.product    
+  - com.vibhuti.microservices.composite.product   
   paths-to-match:
-  -  /**/product-composite/**
+  -  /**
   cache:
     disabled: true
 
