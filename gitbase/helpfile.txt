@@ -88,3 +88,114 @@ https://my.redirect.uri/?code=_r6gV0Db8yHjy4fDY4cv5XXBWbWYh-iazCClcWX3vOGGn5-dVC
   "token_type": "Bearer",
   "expires_in": 3599
 }
+
+
+$ cat auth0client.txt
+export TENANT=dev-ees75xh6ntjfo317.us.auth0.com
+export WRITER_CLIENT_ID=4J3Xc1domJUdzzDwtUnj4FlROpXJzuZU
+export WRITER_CLIENT_SECRET=uM0tQlg6BkkU2fngThsNdwTklL-TXyrfTmpJo8AFp857YrnN5kdVknGo8pwR_hPs
+export READER_CLIENT_ID=vY1ZjF6ZM2grFuiH9LSU8zq1t2tldySj
+export READER_CLIENT_SECRET=e8_W0-iA2cwlGgqLBEPjMSvFYURr-Q6PsCSren5S2g6d_Ns6KdQs8o91XCe6D7dW
+
+
+
+curl https://dev-ees75xh6ntjfo317.us.auth0.com/.well-known/openid-configuration -s | jq
+
+
+--- Auth0
+
+Get Access token using Client Credentials ( ID and Secret)
+
+
+curl -X POST https://$TENANT/oauth/token \
+  -d grant_type=client_credentials \
+  -d audience=https://localhost:8443/product-composite \
+  -d scope=product:read+product:write \
+  -d client_id=$WRITER_CLIENT_ID \
+  -d client_secret=$WRITER_CLIENT_SECRET
+  
+  {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkkzRUdGUWxXODdiUVczZVlwb3pXbyJ9.eyJpc3MiOiJodHRwczovL2Rldi1lZXM3NXhoNm50amZvMzE3LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiI0SjNYYzFkb21KVWR6ekR3dFVuajRGbFJPcFhKenVaVUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6ODQ0My9wcm9kdWN0LWNvbXBvc2l0ZSIsImlhdCI6MTcwNTI2Nzc2NCwiZXhwIjoxNzA1MzU0MTY0LCJhenAiOiI0SjNYYzFkb21KVWR6ekR3dFVuajRGbFJPcFhKenVaVSIsInNjb3BlIjoicHJvZHVjdDpyZWFkIHByb2R1Y3Q6d3JpdGUiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMifQ.mW9mL7-Naokr0Clg43S7Sma2aAtF77wV826G6Ryw9srj-2CSDvybFog8QWjcCUfxHAWP4kKgGA-qBw9uWNxft606EER4bG9Uo7_OnVYVzKVTQnruzkqKfik91mI9uMQLjvX7BUqqtuYMroWj0SD5ayfdA8Hd1k2fMUeVVTHNKrr09LvKt6_dw_nbUQaN-XxNsbACPrEeWK0_nbbebyJ0W0NmO-EGFSII1qrwmAX9ntEjDONoFgunIb6cyabYdorfEoZczUi3G8w21cKMIRI0PQCouWvrJxQC5Mfq1LIUDGkKUS1tDd6a8qEKFsp7NH6ZN0gn7yJj7Qjk8rLPuAp-PA","scope":"product:read product:write","expires_in":86400,"token_type":"Bearer"}dmane@DESKTOP-D9OR5G7:/mnt/c/DilipStore/springboot3-webflux$
+  
+  
+  
+  
+  curl -X POST https://$TENANT/oauth/token \
+  -d grant_type=client_credentials \
+  -d audience=https://localhost:8443/product-composite \
+  -d scope=product:read \
+  -d client_id=$READER_CLIENT_ID \
+  -d client_secret=$READER_CLIENT_SECRET -s | jq -r .access_token
+
+
+
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkkzRUdGUWxXODdiUVczZVlwb3pXbyJ9.eyJpc3MiOiJodHRwczovL2Rldi1lZXM3NXhoNm50amZvMzE3LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJ2WTFaakY2Wk0yZ3JGdWlIOUxTVTh6cTF0MnRsZHlTakBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6ODQ0My9wcm9kdWN0LWNvbXBvc2l0ZSIsImlhdCI6MTcwNTI3NTE2OCwiZXhwIjoxNzA1MzYxNTY4LCJhenAiOiJ2WTFaakY2Wk0yZ3JGdWlIOUxTVTh6cTF0MnRsZHlTaiIsInNjb3BlIjoicHJvZHVjdDpyZWFkIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.tvVIe0Ns6qxQcElyEF8yYFkAQCliJjVMocA8kzDWXF6vjkTglUwASWjBSYztkmVjIr09TCXFHbYjfY4j2ysL-zFdyHhC3kObu-RVWqYB9PqVGxwctyYHQkyfZP2-vaDxmhuduTaVxJm6o53FKsadBzu1fAXTBGFEOAAPTw05_-Qrp9jEWhCBTL1HuM0uyzvAvvUSwCGMMMYGXLEXcZ67NEdgX6xR_7h_yhXzDsoPpDFCLhkaZ4LFwcnjz7ZMyIRoUexl3M5rlE1jAyQtNg2t91iW7_5mwU7NpyNnkGJyht5JNpT9C1Mjhx5dH_GhjfAppsIFDAG56BiCeuFDBoR-cQ
+
+
+Get Access Token using Authenication workflow
+
+For writer id ( Add/ Delete and Product composite)
+
+https://dev-ees75xh6ntjfo317.us.auth0.com/authorize?audience=https://localhost:8443/product-composite&scope=openid email product:read product:write&response_type=code&client_id=4J3Xc1domJUdzzDwtUnj4FlROpXJzuZU&redirect_uri=https://my.redirect.uri&state=845361
+
+Returned Code : Authorisation code
+code=JyQbdCg10qY-HT20Reg2JRjN5aaSVaUzYtUXqZ6rfi5jU&state=845361
+
+export WRITER_AUTH_CODE=JyQbdCg10qY-HT20Reg2JRjN5aaSVaUzYtUXqZ6rfi5jU
+
+-- Get Access token using authorization_code
+
+
+curl -X POST https://$TENANT/oauth/token \
+  -d grant_type=authorization_code \
+  -d audience=https://localhost:8443/product-composite \
+  -d scope=product:read+product:write \
+  -d client_id=$WRITER_CLIENT_ID \
+  -d client_secret=$WRITER_CLIENT_SECRET \
+  -d code=$WRITER_AUTH_CODE \
+  -d redirect_uri=https://my.redirect.uri -s | jq .
+
+
+
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkkzRUdGUWxXODdiUVczZVlwb3pXbyJ9.eyJpc3MiOiJodHRwczovL2Rldi1lZXM3NXhoNm50amZvMzE3LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExNjk1MjIzMDcwNDk3MDE2Njk4NSIsImF1ZCI6WyJodHRwczovL2xvY2FsaG9zdDo4NDQzL3Byb2R1Y3QtY29tcG9zaXRlIiwiaHR0cHM6Ly9kZXYtZWVzNzV4aDZudGpmbzMxNy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzA1Mjc3MzI5LCJleHAiOjE3MDUzNjM3MjksImF6cCI6IjRKM1hjMWRvbUpVZHp6RHd0VW5qNEZsUk9wWEp6dVpVIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZHVjdDpyZWFkIHByb2R1Y3Q6d3JpdGUifQ.b6YKsVofAw0SLULi_-vMI5c53u_vHCauRosE5RKH92H9lTa55ki-ODLaRfDc8d19ACC-QLcw5qUpEa_UK0G840a2_QzfBOZclWlewjbz-oeBA3GxEdtLBpKnKdkpZdZa-BeDNSarhzubipuXi5VjF-jyLR0rP1ahw9xjEp-UcWPxCdt6X4QaIjk4OnzHKvm5qWeaw1OobZMxM5CLX_CZ_t5fdx8xSpTW1rYpF9CFqkDvPXekOE76ODEkXGPm0GNsit1i0JA8PoTxqBWz_HhANX1jUrKsgfWT78ox61-TU4sOtfvVT2LUy0P8gJrLHP14n1Jx5D0m6fajurgQDGIRnA
+
+
+-- Get access token using Authenication workflow
+for READER_CLIENT_ID
+export READER_CLIENT_ID=vY1ZjF6ZM2grFuiH9LSU8zq1t2tldySj
+export READER_CLIENT_SECRET=e8_W0-iA2cwlGgqLBEPjMSvFYURr-Q6PsCSren5S2g6d_Ns6KdQs8o91XCe6D7dW
+
+
+https://dev-ees75xh6ntjfo317.us.auth0.com/authorize?audience=https://localhost:8443/product-composite&scope=openid email product:read&response_type=code&client_id=vY1ZjF6ZM2grFuiH9LSU8zq1t2tldySj&redirect_uri=https://my.redirect.uri&state=845361
+
+
+Returned Code : Authorisation code
+code=8gPPsYdpqkFqf86KEmHRv7mW0dKJ2KtC7G0qhI9MHoT_J
+
+export READER_AUTH_CODE=8gPPsYdpqkFqf86KEmHRv7mW0dKJ2KtC7G0qhI9MHoT_J
+
+-- Get Access token using authorization_code
+
+
+curl -X POST https://$TENANT/oauth/token \
+  -d grant_type=authorization_code \
+  -d audience=https://localhost:8443/product-composite \
+  -d scope=product:read \
+  -d client_id=$READER_CLIENT_ID \
+  -d client_secret=$READER_CLIENT_SECRET \
+  -d code=$READER_AUTH_CODE \
+  -d redirect_uri=https://my.redirect.uri -s | jq .
+  
+  Response
+  {
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkkzRUdGUWxXODdiUVczZVlwb3pXbyJ9.eyJpc3MiOiJodHRwczovL2Rldi1lZXM3NXhoNm50amZvMzE3LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExNjk1MjIzMDcwNDk3MDE2Njk4NSIsImF1ZCI6WyJodHRwczovL2xvY2FsaG9zdDo4NDQzL3Byb2R1Y3QtY29tcG9zaXRlIiwiaHR0cHM6Ly9kZXYtZWVzNzV4aDZudGpmbzMxNy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzA1Mjc3OTA5LCJleHAiOjE3MDUzNjQzMDksImF6cCI6InZZMVpqRjZaTTJnckZ1aUg5TFNVOHpxMXQydGxkeVNqIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZHVjdDpyZWFkIn0.L0-o7xkUGdRe1fI7673AHQ9v96NOpfNGuDTZyF8RYB5PSaCvmMlQYayOgq0CTNyN6zQ983fIIx0Xjh9IWo30FZPyNPPACwPIlMXwaqlscqOWjz0rHUrZYgAjSOBW1iFWqHNd35tOFZz4tiK5TIxDkl6Ijz_WHfBihWiRbAp8vHt5zZtS5nyuMl24ZBanq3lA7fRecPbd96vELkjzRRsOnVAXrBXo3xQlZcHen5fFSy-F4Rnwo7Z1-yTAZUkPaXdCXG5HHzuOySSVHtoaEMjjx8jE3yOxQboQga2sG6nh3tOjcM9F1n-tgpyG5vo_wSEwnBPvMTIBzXkKf-PBImj-mQ",
+  "id_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvamF2YWRldmVsb3BAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOi8vZGV2LWVlczc1eGg2bnRqZm8zMTcudXMuYXV0aDAuY29tLyIsImF1ZCI6InZZMVpqRjZaTTJnckZ1aUg5TFNVOHpxMXQydGxkeVNqIiwiaWF0IjoxNzA1Mjc3OTA5LCJleHAiOjE3MDUzMTM5MDksInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTE2OTUyMjMwNzA0OTcwMTY2OTg1Iiwic2lkIjoiRndwRkRUcXJ6eTlmdV9McjF6XzdoejlqVFoyMktKTWcifQ.7LUVrkQ0xtHaez2m-w20p2B31J5bc1i7vZ9PYv0Ddjk",
+  "scope": "openid email product:read",
+  "expires_in": 86400,
+  "token_type": "Bearer"
+}
+
+
+
+Getting extra information about the user
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" https://dev-ees75xh6ntjfo317.us.auth0.com/userinfo -s | jq

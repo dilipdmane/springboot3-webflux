@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+TENANT=dev-ees75xh6ntjfo317.us.auth0.com
+MGM_CLIENT_ID=6tVCyjnYqBa15SlrNxhqRZePR0U9PKNH
+MGM_CLIENT_SECRET=8r7Wt0ysK_hmY6R53BTy7SS1Q9rASto_bo5_kDFXMR5cBJjNbqFlql1XPPfoMWbA
+USER_EMAIL=tojavadevelop@gmail.com
+USER_PASSWORD=Essex@2022

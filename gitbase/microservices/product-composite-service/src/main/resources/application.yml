@@ -151,7 +151,7 @@ spring.rabbitmq:
   username: guest
   password: guest
 
-spring.security.oauth2.resourceserver.jwt.issuer-uri: http://${app.auth-server}:9999
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://dev-ees75xh6ntjfo317.us.auth0.com/
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
 

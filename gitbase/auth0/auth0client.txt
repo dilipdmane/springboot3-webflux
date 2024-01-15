@@ -1,0 +1,5 @@
+export TENANT=dev-ees75xh6ntjfo317.us.auth0.com
+export WRITER_CLIENT_ID=4J3Xc1domJUdzzDwtUnj4FlROpXJzuZU
+export WRITER_CLIENT_SECRET=uM0tQlg6BkkU2fngThsNdwTklL-TXyrfTmpJo8AFp857YrnN5kdVknGo8pwR_hPs
+export READER_CLIENT_ID=vY1ZjF6ZM2grFuiH9LSU8zq1t2tldySj
+export READER_CLIENT_SECRET=e8_W0-iA2cwlGgqLBEPjMSvFYURr-Q6PsCSren5S2g6d_Ns6KdQs8o91XCe6D7dW
